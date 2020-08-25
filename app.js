@@ -83,6 +83,49 @@ let player = null;
 let players = [];
 let walls = [];
 
+const minimap = new Rectangle(5, 30, 150, 150);
+minimap.render = function() {
+  ctx.save();
+  ctx.translate(-(ctx.canvas.width / 2), -(ctx.canvas.height / 2));
+  
+  ctx.beginPath();
+  ctx.rect(this.x, this.y, this.width, this.height);
+  ctx.closePath();
+  
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#000";
+  ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+  ctx.stroke();
+  ctx.fill();
+  
+  for(let i = 0; i < players.length; i++) {
+    ctx.beginPath();
+    ctx.arc(
+      this.x + this.width * (players[i].x / map.width),
+      this.y + this.height * (players[i].y / map.height),
+      2 + this.width / 150,
+      0,
+      2 * Math.PI
+    );
+    ctx.closePath();
+    ctx.fillStyle = "rgb(" + players[i].color + ")";
+    ctx.fill();
+  }
+  ctx.beginPath();
+  ctx.arc(
+    this.x + this.width * (player.x / map.width),
+    this.y + this.height * (player.y / map.height),
+    3 + this.width / 150,
+    0,
+    2 * Math.PI
+  );
+  ctx.closePath();
+  ctx.fillStyle = "rgb(255, 241, 51)";
+  ctx.fill();
+  
+  ctx.restore();
+};
+
 function renderGrid() {
   let offsetX = cam.x % 20;
   let offsetY = cam.y % 20;
@@ -190,6 +233,13 @@ function renderPlayer(player) {
 }
 
 function render() {  
+  if(keys.has(77)) {
+    minimap.size(ctx.canvas.height - 200, ctx.canvas.height - 200);
+    minimap.move(ctx.canvas.width / 2 - minimap.width / 2, ctx.canvas.height / 2 - minimap.height / 2);
+  } else {
+    minimap.move(5, 30);
+    minimap.size(150, 150);
+  }
   Server.send(PROTOCOL.INPUT, {
     input: [keys.has(65), keys.has(68), keys.has(87), keys.has(83)]
   });
@@ -204,6 +254,7 @@ function render() {
   for(const wall of walls) renderWall(wall);
   for(const player of players) renderPlayer(player);
   renderPlayer(player);
+  minimap.render();
   ctx.restore();
   
   if(!player) return;
