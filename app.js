@@ -99,6 +99,7 @@ minimap.render = function() {
   ctx.fill();
   
   for(let i = 0; i < players.length; i++) {
+    if(!players[i].spawned) continue;
     ctx.beginPath();
     ctx.arc(
       this.x + this.width * (players[i].x / map.width),
