@@ -116,11 +116,7 @@ function renderGrid() {
 
 function renderBorder() {
   ctx.beginPath();
-  ctx.moveTo(0 - cam.x, 0 - cam.y);
-  ctx.lineTo(map.width - cam.x, 0 - cam.y);
-  ctx.lineTo(map.width - cam.x, map.height - cam.y);
-  ctx.lineTo(0 - cam.x, map.height - cam.y);
-  ctx.lineTo(0 - cam.x, 0 - cam.y);
+  ctx.rect(0- cam.x, 0 -cam.y, map.width, map.height);
   ctx.closePath();
   
   ctx.strokeStyle = "#000";
