@@ -115,13 +115,9 @@ function renderGrid() {
 };
 
 function renderBorder() {
-  ctx.beginPath();
-  ctx.rect(0- cam.x, 0 -cam.y, map.width, map.height);
-  ctx.closePath();
-  
   ctx.strokeStyle = "#000";
   ctx.lineWidth = 10;
-  ctx.stroke();
+  ctx.strokeRect(0 - cam.x, 0 - cam.y, map.width, map.height);
 }
 
 function renderWall(wall) {
