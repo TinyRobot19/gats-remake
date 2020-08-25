@@ -5,7 +5,8 @@ const PROTOCOL = {
   MESSAGE: ++id,
   SPAWN: ++id,
   STATE: ++id,
-  INPUT: ++id
+  INPUT: ++id,
+  WALLS: ++id
 };
 
 const Server = {
@@ -32,6 +33,10 @@ const Server = {
       case PROTOCOL.STATE: {
         player = data.self;
         players = data.players;
+        break;
+      }
+      case PROTOCOL.WALLS: {
+        walls = data.walls;
         break;
       }
     }
@@ -76,6 +81,7 @@ const keys = new Set();
 let interval = null;
 let player = null;
 let players = [];
+let walls = [];
 
 function renderGrid() {
   let offsetX = cam.x % 20;
@@ -120,6 +126,16 @@ function renderBorder() {
   ctx.strokeStyle = "#000";
   ctx.lineWidth = 10;
   ctx.stroke();
+}
+
+function renderWall(wall) {
+  ctx.fillStyle = "rgb(" + wall.color + ")";
+  ctx.strokeStyle = "#808080";
+  ctx.beginPath();
+  ctx.rect(wall.x - cam.x, wall.y - cam.y, wall.width, wall.height);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.fill();
 }
 
 function renderPlayer(player) {
@@ -193,6 +209,7 @@ function render() {
   
   renderGrid();
   renderBorder();
+  for(const wall of walls) renderWall(wall);
   for(const player of players) renderPlayer(player);
   renderPlayer(player);
   ctx.restore();
