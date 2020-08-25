@@ -4,7 +4,8 @@ const PROTOCOL = {
   PING: ++id,
   MESSAGE: ++id,
   SPAWN: ++id,
-  STATE: ++id
+  STATE: ++id,
+  INPUT: ++id
 };
 
 const Server = {
@@ -66,10 +67,11 @@ const canvas = element("canvas");
 const ctx = canvas.getContext("2d");
 
 const map = {
-  width: 7000,
-  height: 7000
+  width: 1000,
+  height: 1000
 };
 const cam = new Point(0, 0);
+const keys = new Set();
 
 let interval = null;
 let player = null;
@@ -180,6 +182,9 @@ function renderPlayer(player) {
 }
 
 function render() {  
+  Server.send(PROTOCOL.INPUT, {
+    input: [keys.has(65), keys.has(68), keys.has(87), keys.has(83)]
+  });
   cam.move(player ? player : new Point(0, 0));
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
@@ -231,6 +236,8 @@ function resize() {
 }
 
 addEventListener('resize', resize);
+addEventListener('keydown', e => keys.add(e.keyCode));
+addEventListener('keyup', e => keys.delete(e.keyCode));
 
 resize();
 
