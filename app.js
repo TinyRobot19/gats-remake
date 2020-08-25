@@ -72,8 +72,8 @@ const canvas = element("canvas");
 const ctx = canvas.getContext("2d");
 
 const map = {
-  width: 1000,
-  height: 1000
+  width: 2000,
+  height: 2000
 };
 const cam = new Point(0, 0);
 const keys = new Set();
