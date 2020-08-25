@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Gats Remake</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	
+	<body>
+		<div id="menu-container">
+			<div id="selection-container">
+				<select id="armor-select">
+					<option value="0">No armor</option>
+					<option value="1">30 armor</option>
+					<option value="2">60 armor</option>
+					<option value="3">90 armor</option>
+					<option value="4">120 armor</option>
+				</select>
+				<select id="gun-select">
+					<option value="Pistol">Pistol</option>
+					<option value="SMG">SMG</option>
+					<option value="Shotgun">Shotgun</option>
+					<option value="Assault">Assault</option>
+					<option value="Sniper">Sniper</option>
+					<option value="LMG">LMG</option>
+					<option value="Ball">Ball</option>
+				</select>
+			</div>
+      
+			<div id="play-container">
+				<input type="text" id="name-input" placeholder="Enter Name" maxlength="20">
+				<button id="play-button" onclick="play();">Play</button>
+			</div>
+		</div>
+		
+		<canvas id="canvas">
+
+    <script src="geometry.js"></script>
+		<script src="app.js"></script>
+	</body>
+</html>
