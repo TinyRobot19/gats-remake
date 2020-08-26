@@ -76,6 +76,7 @@ const map = {
   height: 2000
 };
 const cam = new Point(0, 0);
+const mouse = new Point(0, 0);
 const keys = new Set();
 
 let interval = null;
@@ -221,6 +222,16 @@ function renderPlayer(player) {
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
     ctx.fill();
   }
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.rotate(player.angle * Math.PI / 180);
+  ctx.lineTo(x, y - player.radius);
+  ctx.closePath();
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "black";
+  ctx.stroke();
+  ctx.restore();
   
   ctx.fillStyle = "#666666";
   ctx.textAlign = "center";
@@ -242,7 +253,18 @@ function render() {
     minimap.size(150, 150);
   }
   Server.send(PROTOCOL.INPUT, {
-    input: [keys.has(65), keys.has(68), keys.has(87), keys.has(83)]
+    input: [
+      keys.has(65),
+      keys.has(68),
+      keys.has(87),
+      keys.has(83),
+      angle(
+        player.x - cam.x,
+        player.y - cam.y,
+        player.x - cam.x + (mouse.x - innerWidth / 2),
+        player.y - cam.y + (mouse.y - innerHeight / 2)
+      ) + 90
+    ]
   });
   cam.move(player ? player : new Point(0, 0));
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -291,6 +313,15 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function angle(cx, cy, ex, ey) {
+  var dy = ey - cy;
+  var dx = ex - cx;
+  var theta = Math.atan2(dy, dx); // range (-PI, PI]
+  theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
+  //if (theta < 0) theta = 360 + theta; // range [0, 360)
+  return theta;
+}
+
 function resize() {
 	canvas.width = innerWidth;
 	canvas.height = innerHeight;
@@ -299,6 +330,9 @@ function resize() {
 addEventListener('resize', resize);
 addEventListener('keydown', e => keys.add(e.keyCode));
 addEventListener('keyup', e => keys.delete(e.keyCode));
+addEventListener("mousemove", e => {
+	mouse.move(e.clientX, e.clientY);
+});
 
 resize();
 
