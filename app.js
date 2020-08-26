@@ -37,7 +37,7 @@ const Server = {
       }
       case PROTOCOL.DATA: {
         walls = data.walls;
-        map = data.map
+        map = data.map;
         break;
       }
     }
@@ -72,7 +72,7 @@ Server.ping = function() {
 const canvas = element("canvas");
 const ctx = canvas.getContext("2d");
 
-const map = {
+let map = {
   width: 0,
   height: 0
 };
