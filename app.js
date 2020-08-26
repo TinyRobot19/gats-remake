@@ -222,7 +222,7 @@ function renderPlayer(player) {
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
     ctx.fill();
   }
-  ctx.save();
+  /*ctx.save();
   ctx.beginPath();
   ctx.moveTo(x, y);
   ctx.rotate(player.angle * Math.PI / 180);
@@ -231,7 +231,7 @@ function renderPlayer(player) {
   ctx.lineWidth = 3;
   ctx.strokeStyle = "black";
   ctx.stroke();
-  ctx.restore();
+  ctx.restore();*/
   
   ctx.fillStyle = "#666666";
   ctx.textAlign = "center";
