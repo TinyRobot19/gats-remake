@@ -6,7 +6,7 @@ const PROTOCOL = {
   SPAWN: ++id,
   STATE: ++id,
   INPUT: ++id,
-  WALLS: ++id
+  DATA: ++id
 };
 
 const Server = {
@@ -35,8 +35,9 @@ const Server = {
         players = data.players;
         break;
       }
-      case PROTOCOL.WALLS: {
+      case PROTOCOL.DATA: {
         walls = data.walls;
+        map = data.map
         break;
       }
     }
@@ -72,8 +73,8 @@ const canvas = element("canvas");
 const ctx = canvas.getContext("2d");
 
 const map = {
-  width: 2000,
-  height: 2000
+  width: 0,
+  height: 0
 };
 const cam = new Point(0, 0);
 const mouse = new Point(0, 0);
@@ -267,7 +268,8 @@ function render() {
     ]
   });
   cam.move(player ? player : new Point(0, 0));
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#efeff5";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   
   ctx.save();
 	ctx.translate(canvas.width / 2, canvas.height / 2);
