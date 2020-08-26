@@ -180,21 +180,21 @@ function renderPlayer(player) {
   const y = player.y - cam.y;
     
   ctx.beginPath();
-  ctx.arc(x, y, 26, 0, 2 * Math.PI);
+  ctx.arc(x, y, player.radius, 0, 2 * Math.PI);
   ctx.closePath();
   
   ctx.fillStyle = "rgb(102, 102, 102)";
   ctx.fill();
   
   ctx.beginPath();
-  ctx.arc(x, y, (26 - player.armor / 10 - 2), 0, 2 * Math.PI);
+  ctx.arc(x, y, (player.radius - player.armor / 10 - 2), 0, 2 * Math.PI);
   ctx.closePath();
   
   ctx.fillStyle = "rgb(" + player.color + ")";
   ctx.fill();
   
   ctx.beginPath();
-  ctx.arc(x, y, (26 - player.armor / 10 - 2), 0, 2 * Math.PI);
+  ctx.arc(x, y, (player.radius - player.armor / 10 - 2), 0, 2 * Math.PI);
   ctx.closePath();
   
   ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
@@ -204,7 +204,7 @@ function renderPlayer(player) {
   ctx.arc(
     x,
     y,
-    (26 - player.armor / 10 - 2) * (player.health / 100),
+    (player.radius - player.armor / 10 - 2) * (player.health / 100),
     0,
     2 * Math.PI
   );
@@ -215,7 +215,7 @@ function renderPlayer(player) {
   
   if(!player.moved) {
     ctx.beginPath();
-    ctx.arc(x, y, 26, 0, 2 * Math.PI);
+    ctx.arc(x, y, player.radius, 0, 2 * Math.PI);
     ctx.closePath();
   
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
@@ -229,7 +229,7 @@ function renderPlayer(player) {
   ctx.fillText(
     player.name,
     x,
-    y + 26 + 14
+    y + player.radius + 14
   );
 }
 
