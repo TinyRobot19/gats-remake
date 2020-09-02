@@ -113,6 +113,7 @@ function draw() {
   textSize(14);
   textFont('Arial');
   
+  noStroke();
   fill('green');
   
   text('Playing as ' + player.name, 5, 20);
