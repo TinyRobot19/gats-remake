@@ -87,8 +87,8 @@ function setup() {
 
 function draw() {
   try {
-  cam.x = player.x;
-  cam.y = player.y;
+  cam.x = player.x + 20 * ((mouseX - width / 2) / (width / 2));
+  cam.y = player.y + 20 * ((mouseY - height / 2) / (height / 2));
   
   clear();
   
@@ -185,10 +185,16 @@ function drawPlayer(player) {
   
   circle(x, y, (radius / 2 - player.armor / 10 - 2) * (player.health / 100) * 2);
   
+  stroke('#000');
+  strokeWeight(1);
+  
+  line(x, y, mouseX - width / 2, mouseY - height / 2);
+  
   textAlign(CENTER);
   textSize(14);
   textFont('Arial');
   
+  noStroke();
   fill('#666666');
   
   text(player.name, x, y + player.radius + 14);
