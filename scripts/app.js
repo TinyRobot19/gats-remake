@@ -208,8 +208,9 @@ function drawMinimap() {
   
   rect(x, y, width, height);
   
+  noStroke();
+  
   for(const player of players) {
-    noStroke();
     fill(player.color);
     
     circle(
