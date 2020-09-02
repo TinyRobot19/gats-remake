@@ -36,8 +36,8 @@ const Server = {
         break;
       }
       case PROTOCOL.DATA: {
-        walls = data.walls;
-        map = data.map;
+        if(data.hasOwnProperty('walls')) walls = data.walls;
+        if(data.hasOwnProperty('map')) map = data.map;
         break;
       }
     }
@@ -45,7 +45,7 @@ const Server = {
 };
 
 Server.connect = function() {
-  if(!this.ws) this.ws = new WebSocket('wss://acidic-mini-bromine.glitch.me');
+  if(!this.ws) this.ws = new WebSocket('wss://acidic-mini-bromine.glitch.me/');
   this.ws.onopen = this.onopen.bind(this);
   this.ws.onclose = this.onclose.bind(this);
   this.ws.onmessage = this.onmessage.bind(this);
@@ -150,13 +150,21 @@ function drawWalls() {
 }
 
 function drawWall(wall) {
+  const x = wall.x - cam.x;
+  const y = wall.y - cam.y;
+  
   rectMode(CENTER);
   
   stroke('#808080');
   strokeWeight(5);
   fill(wall.color);
   
-  rect(wall.x - cam.x, wall.y - cam.y, wall.width, wall.height);
+  angleMode(DEGREES);
+  translate(x, y);
+  rotate(wall.angle);
+  rect(0, 0, wall.width, wall.height);
+  rotate(0 - wall.angle);
+  translate(0 - x, 0 - y);
 }
 
 function drawPlayers() {
@@ -185,11 +193,6 @@ function drawPlayer(player) {
   
   circle(x, y, (radius / 2 - player.armor / 10 - 2) * (player.health / 100) * 2);
   
-  stroke('#000');
-  strokeWeight(1);
-  
-  line(x, y, mouseX - width / 2, mouseY - height / 2);
-  
   textAlign(CENTER);
   textSize(14);
   textFont('Arial');
@@ -198,6 +201,16 @@ function drawPlayer(player) {
   fill('#666666');
   
   text(player.name, x, y + player.radius + 14);
+  
+  stroke('#000');
+  strokeWeight(4);
+  
+  angleMode(DEGREES);
+  translate(x, y);
+  rotate(player.angle);
+  line(0, 0, 0, player.radius);
+  rotate(0 - player.angle);
+  translate(0 - x, 0 - y);
 }
 
 function drawMinimap() {
@@ -248,6 +261,7 @@ function play() {
         keyIsDown(68),
         keyIsDown(87),
         keyIsDown(83),
+        angle(player.x - cam.x, player.y - cam.y, mouseX - width / 2, mouseY - height / 2) - 90
       ]
     });
   }, 1000 / 60);
@@ -255,6 +269,15 @@ function play() {
   element("menu-container").style.display = "none";
   
   loop();
+}
+
+function angle(cx, cy, ex, ey) {
+  var dy = ey - cy;
+  var dx = ex - cx;
+  var theta = Math.atan2(dy, dx); // range (-PI, PI]
+  theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
+  //if (theta < 0) theta = 360 + theta; // range [0, 360)
+  return theta;
 }
 
 function element(id) {
