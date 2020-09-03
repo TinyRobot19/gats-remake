@@ -9,6 +9,12 @@ const PROTOCOL = {
   DATA: ++pid
 };
 
+const WALL_TYPES = {
+  RECTANGLE: 0,
+  CIRCLE: 1,
+  POLYGON: 2
+};
+
 const Server = {
   ws: null,
   onopen(e) {
@@ -153,18 +159,38 @@ function drawWall(wall) {
   const x = wall.x - cam.x;
   const y = wall.y - cam.y;
   
+  angleMode(DEGREES);
   rectMode(CENTER);
   
   stroke('#808080');
   strokeWeight(5);
   fill(wall.color);
   
-  angleMode(DEGREES);
-  translate(x, y);
-  rotate(wall.angle);
-  rect(0, 0, wall.width, wall.height);
-  rotate(0 - wall.angle);
-  translate(0 - x, 0 - y);
+  switch(wall.type) {
+    case WALL_TYPES.RECTANGLE: {
+      translate(x, y);
+      rotate(wall.angle);
+      rect(0, 0, wall.width, wall.height);
+      stroke('#000');
+      strokeWeight(2);
+      line(0, 0, wall.width / 2, 0);
+      rotate(0 - wall.angle);
+      translate(0 - x, 0 - y);
+      break
+    }
+    
+    case WALL_TYPES.CIRCLE: {
+      circle(x, y, wall.radius * 2);
+      translate(x, y);
+      rotate(wall.angle);
+      stroke('#000');
+      strokeWeight(2);
+      line(0, 0, wall.radius, 0);
+      rotate(0 - wall.angle);
+      translate(0 - x, 0 - y);
+      break
+    }
+  }
 }
 
 function drawPlayers() {
@@ -203,12 +229,12 @@ function drawPlayer(player) {
   text(player.name, x, y + player.radius + 14);
   
   stroke('#000');
-  strokeWeight(4);
+  strokeWeight(2);
   
   angleMode(DEGREES);
   translate(x, y);
   rotate(player.angle);
-  line(0, 0, 0, player.radius);
+  line(0, 0, player.radius, 0);
   rotate(0 - player.angle);
   translate(0 - x, 0 - y);
 }
@@ -261,7 +287,7 @@ function play() {
         keyIsDown(68),
         keyIsDown(87),
         keyIsDown(83),
-        angle(player.x - cam.x, player.y - cam.y, mouseX - width / 2, mouseY - height / 2) - 90
+        angle(player.x - cam.x, player.y - cam.y, mouseX - width / 2, mouseY - height / 2)
       ]
     });
   }, 1000 / 60);
