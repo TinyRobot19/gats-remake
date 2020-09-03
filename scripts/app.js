@@ -1,12 +1,15 @@
 let pid = 0;
 
+let chatting = false;
+
 const PROTOCOL = {
   PING: ++pid,
   MESSAGE: ++pid,
   SPAWN: ++pid,
   STATE: ++pid,
   INPUT: ++pid,
-  DATA: ++pid
+  DATA: ++pid,
+  CHAT: ++pid
 };
 
 const WALL_TYPES = {
@@ -44,6 +47,10 @@ const Server = {
       case PROTOCOL.DATA: {
         if(data.hasOwnProperty('walls')) walls = data.walls;
         if(data.hasOwnProperty('map')) map = data.map;
+        break;
+      }
+      case PROTOCOL.CHAT: {
+        chat(data);
         break;
       }
     }
@@ -88,6 +95,7 @@ let walls = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  document.getElementsByTagName('canvas')[0].addEventListener('click', e => {chatting = false});
   noLoop();
 }
 
@@ -283,18 +291,35 @@ function play() {
   interval = setInterval(function() {
     Server.send(PROTOCOL.INPUT, {
       input: [
-        keyIsDown(65),
-        keyIsDown(68),
-        keyIsDown(87),
-        keyIsDown(83),
+        !chatting && keyIsDown(65),
+        !chatting && keyIsDown(68),
+        !chatting && keyIsDown(87),
+        !chatting && keyIsDown(83),
         angle(player.x - cam.x, player.y - cam.y, mouseX - width / 2, mouseY - height / 2)
       ]
     });
   }, 1000 / 60);
   
   element("menu-container").style.display = "none";
+  element("chat-container").style.display = "block";
+  
+  element('chat-input').addEventListener('focus', e => {chatting = true});
   
   loop();
+}
+
+function keyPressed() {
+  if(keyCode === 13) {
+    if(!chatting) {
+      element("chat-input").focus();
+      chatting = true;
+    } else {
+      Server.send(PROTOCOL.CHAT, {message: element("chat-input").value});
+      element("chat-input").blur();
+      element("chat-input").value = '';
+      chatting = false;
+    }
+  }
 }
 
 function angle(cx, cy, ex, ey) {
@@ -312,6 +337,18 @@ function element(id) {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+}
+
+function chat(data) {
+  const message = document.createElement('span');
+  message.classList.add('chat-message');
+  const author = document.createElement('span');
+  author.classList.add('chat-message-author');
+  author.innerHTML = data.author;
+  message.appendChild(author);
+  message.innerHTML += data.message;
+  element('messages-container').appendChild(message);
+  element('messages-container').scrollTop  = element('messages-container').offsetHeight;
 }
 
 Server.connect();
