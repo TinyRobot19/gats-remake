@@ -78,6 +78,10 @@ select {
 }
 
 #chat-input {
+  position: absolute;
+	top: 60%;
+	left: 50%;
+	transform: translate(-50%, -50%);
   display: none;
   border: 2px solid black;
   width: 200px;
