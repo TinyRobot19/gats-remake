@@ -93,6 +93,8 @@ function send(data) {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   
+  hide('canvas');
+  
   noLoop();
 }
 
@@ -290,6 +292,7 @@ function play() {
   });
   
   hide('#menu-container');
+  show('canvas');
   
   loop();
 }
