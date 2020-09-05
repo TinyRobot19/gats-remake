@@ -10,7 +10,9 @@
   </head>
   
   <body>
-    <div id="menu-container">
+    <p id="helper-text" class="center">Connecting...</p>
+    
+    <div id="menu-container" class="center">
 			<div id="selection-container">
 				<select id="armor-select">
 					<option value="0">No armor</option>
@@ -19,6 +21,7 @@
 					<option value="3">90 armor</option>
 					<option value="4">120 armor</option>
 				</select>
+        
 				<select id="gun-select">
 					<option value="Pistol">Pistol</option>
 					<option value="SMG">SMG</option>
@@ -31,17 +34,14 @@
 			</div>
       
 			<div id="play-container">
-				<input type="text" id="name-input" placeholder="Enter Name" maxlength="20">
-				<button id="play-button" onclick="play();">Play</button>
+				<input id="name-input" type="text" placeholder="Enter Name" maxlength="20">
+        
+				<button id="play-button">Play</button>
 			</div>
 		</div>
     
-    <div id="chat-container">
-      <div id="messages-container">
-      </div>
-      <input id="chat-input" type="text" />
-    </div>
-    
+     <input id="chat-input" class="center" type="text" placeholder="Type a message" maxlength="20" />
+     
     <script src="libs/p5.min.js"></script>
     <script src="scripts/app.js"></script>
   </body>
