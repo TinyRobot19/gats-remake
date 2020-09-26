@@ -121,6 +121,20 @@ function draw() {
   drawPlayers();
   drawPlayer(player);
   
+  let point = findPoint(player.x, player.y, player.angle, 60);
+  
+  let preview = {
+    angle: 0,
+    color: [0, 0, 0, 0],
+    height: 40,
+    type: 0,
+    width: 40,
+    x: point.x,
+    y: point.y
+  };
+
+  drawWall(preview);
+  
   //scale(2);
   
   translate(0 - width / 2, 0 - height / 2);
@@ -343,6 +357,15 @@ function angle(cx, cy, ex, ey) {
   theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
   //if (theta < 0) theta = 360 + theta; // range [0, 360)
   return theta;
+}
+
+function findPoint(x, y, angle, distance) {
+  let result = {};
+  
+  result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + x);
+  result.y = Math.round(Math.sin(angle * Math.PI / 180) * distance + y);
+
+  return result;
 }
 
 function windowResized() {
