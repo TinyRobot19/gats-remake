@@ -17,6 +17,7 @@ function hide(e) {
 const _ = undefined;
 
 let pid = 0;
+let chatting = false;
 
 const SERVER_URL = 'gat-remake-server.glitch.me';
 const PROTOCOL = {
@@ -24,12 +25,13 @@ const PROTOCOL = {
   DATA: ++pid,
   STATE: ++pid,
   SPAWN: ++pid,
-  INPUT: ++pid
+  INPUT: ++pid,
+  CHAT: ++pid
 };
 let socket, interval;
 let map = { width: 0, height: 0 };
 let cam = { x: 0, y: 0 };
-let player = { x: 0, y: 0, color: [0, 0, 0] };
+let player = { x: 0, y: 0, color: [0, 0, 0], message: '' };
 let players = [];
 let walls = [];
 let keys = new Set();
@@ -47,6 +49,8 @@ function connect() {
   
   on(socket, 'close', () => {
     hide('#menu-container');
+    hide('canvas');
+    hide('#chat-input');
     show('#helper-text');
     
     el('#helper-text').innerText = 'Disconnected. Click to reload';
@@ -99,20 +103,8 @@ function setup() {
 }
 
 function draw() {
-  send({
-    id: PROTOCOL.INPUT,
-    input: [
-      keys.has(65),
-      keys.has(68),
-      keys.has(87),
-      keys.has(83),
-      angle(player.x - cam.x, player.y - cam.y, mouseX - width / 2, mouseY - height / 2),
-      player.name === 'Random' && keys.has(32)
-    ]
-  });
-  
-  cam.x = player.x + 20 * ((mouseX - width / 2) / (width / 2));
-  cam.y = player.y + 20 * ((mouseY - height / 2) / (height / 2));
+  cam.x = player.x + 40 * ((mouseX - width / 2) / (width / 2));
+  cam.y = player.y + 40 * ((mouseY - height / 2) / (height / 2));
   
   clear();
   
@@ -135,9 +127,10 @@ function draw() {
   
   drawMinimap();
   
-  textAlign(LEFT);
+  textAlign(LEFT, BASELINE);
   textSize(14);
   textFont('Arial');
+  textStyle(BOLD);
   
   noStroke();
   fill('green');
@@ -229,14 +222,43 @@ function drawPlayer(player) {
   
   circle(x, y, (radius / 2 - player.armor / 10 - 2) * (player.health / player.maxHealth) * 2);
   
-  textAlign(CENTER);
+  textAlign(CENTER, TOP);
   textSize(14);
   textFont('Arial');
+  textStyle(BOLD);
   
   noStroke();
   fill('#666666');
   
-  text(player.name, x, y + player.radius + 14);
+  text('[' + player.id + '] ' + player.name + ' ' + player.cooldown, x, y + player.radius + 5);
+  
+  if(player.message.length) {
+    rectMode(CENTER);
+    
+    noStroke();
+    fill([157, 157, 159]);
+    
+    rect(x, y + player.radius + 30, textWidth(player.message) + 10, 20);
+    
+    textAlign(CENTER, CENTER);
+    
+    fill('#fff');
+    
+    text(player.message, x, y + player.radius + 30);
+  } else if(player.input[6]) {
+    rectMode(CENTER);
+    
+    noStroke();
+    fill([157, 157, 159]);
+    
+    rect(x, y + player.radius + 30, textWidth('...') + 10, 20);
+    
+    textAlign(CENTER, CENTER);
+    
+    fill('#fff');
+    
+    text('...', x, y + player.radius + 30);
+  }
   
   stroke('#000');
   strokeWeight(2);
@@ -291,8 +313,25 @@ function play() {
     name: el('#name-input').value
   });
   
+  interval = setInterval(function(){
+    send({
+    id: PROTOCOL.INPUT,
+    input: [
+      !chatting && keys.has(65),
+      !chatting && keys.has(68),
+      !chatting && keys.has(87),
+      !chatting && keys.has(83),
+      angle(player.x - cam.x, player.y - cam.y, mouseX - width / 2, mouseY - height / 2),
+      !chatting && keys.has(32),
+      chatting
+    ]
+  });
+  })
+  
   hide('#menu-container');
   show('canvas');
+  
+  on(_, 'keypress', chat);
   
   loop();
 }
@@ -310,16 +349,24 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-function chat(data) {
-  const message = document.createElement('span');
-  message.classList.add('chat-message');
-  const author = document.createElement('span');
-  author.classList.add('chat-message-author');
-  author.innerHTML = data.author;
-  message.appendChild(author);
-  message.innerHTML += data.message;
-  element('messages-container').appendChild(message);
-  element('messages-container').scrollTop  = element('messages-container').offsetHeight;
+function chat(e) {
+  if(e.keyCode !== 13) return;
+  if(chatting) {
+    chatting = false;
+    hide('#chat-input');
+    
+    let message = el('#chat-input').value;
+    
+    if(message !== '') {
+      send({ id: PROTOCOL.CHAT, message: message })
+    }
+    
+    el('#chat-input').value = '';
+  } else {
+    chatting = true;
+    show('#chat-input');
+    el('#chat-input').focus();
+  }
 }
 
 document.addEventListener('keydown', function(e) {
