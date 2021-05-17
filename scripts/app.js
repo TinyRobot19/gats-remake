@@ -19,7 +19,7 @@ const _ = undefined;
 let pid = 0;
 let chatting = false;
 
-const SERVER_URL = 'gat-remake-server.glitch.me';
+const SERVER_URL = 'gats-server.herokuapp.com';
 const PROTOCOL = {
   PING: ++pid,
   DATA: ++pid,
